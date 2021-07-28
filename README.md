@@ -1,5 +1,5 @@
 # flask Todo app-monitoring
-flask webapp monitoring with prometheus, grafana
+flask todo web app monitoring with prometheus, grafana
 
 API: http://localhost:5000/
 Prometheus: http://localhost:9090/
