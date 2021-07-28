@@ -1,18 +1,32 @@
+import logging
 from flask import Flask, render_template, request, redirect, url_for
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
+from prometheus_flask_exporter import PrometheusMetrics
+
+
+
+logging.basicConfig(level=logging.INFO)
+logging.info("Setting LOGLEVEL to INFO")
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
+
+metrics.info("app_info", "App Info, this can be anything you want", version="1.0.0")
+
 
 # /// = relative path, //// = absolute path
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
 
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     complete = db.Column(db.Boolean)
+
 
 
 @app.route("/")
@@ -44,7 +58,3 @@ def delete(todo_id):
     db.session.delete(todo)
     db.session.commit()
     return redirect(url_for("home"))
-
-if __name__ == "__main__":
-    db.create_all()
-    app.run(debug=True)
